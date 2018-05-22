@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" type="image/x-icon" href="assets/pics/pizzaIcon.png" />
+    <title>TMNT RCG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+        crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script>
+
+        $(document).ready(function () {
+
+
+            var characters = { //character list
+                mikey: {
+                    hp: 180,
+                    attk: 20,
+                    counter: 10,
+                    oppHp: 200,
+                    xp: 15
+                },
+
+                leo: {
+                    hp: 170,
+                    attk: 25,
+                    counter: 10,
+                    oppHp: 160,
+                    xp: 15
+                },
+
+                donny: {
+                    hp: 200,
+                    attk: 15,
+                    counter: 6,
+                    oppHp: 300,
+                    xp: 15
+                },
+
+                raph: {
+                    hp: 120,
+                    attk: 40,
+                    counter: 15,
+                    oppHp: 100,
+                    xp: 15
+                },
+
+                shredder: {
+                    hp: 300,
+                    attk: 15,
+                    counter: 25,
+                    oppHp: 500,
+                    xp: 15
+                },
+
+                foot: {
+                    hp: 100,
+                    attk: 3,
+                    counter: 3,
+                    oppHp: 100,
+                    xp: 15
+                },
+
+                bebop: {
+                    hp: 200,
+                    attk: 6,
+                    counter: 10,
+                    oppHp: 200,
+                    xp: 15
+                },
+
+                rocksteady: {
+                    hp: 200,
+                    attk: 6,
+                    counter: 10,
+                    oppHp: 200,
+                    xp: 15
+                }
+
+            }
+            var wins = 0; //global variables for keeping track
+            var HP; 
+            var oppHP;
+            var attack;
+            var countr;
+            var playerChar; //used to pull the current player value out of initial click
+            var opponent; //same for opponent
+            var baseAttack; //used to add to attack so increases aren't exponetial
+            var resetClone = $("#charSelect").clone() //div clone used for a reset
+            //choose character
+            $("body").on("click", ".charPic", function () { //character select
+                var playerId = this.id;
+                var charselect = characters[playerId];
+                console.log(charselect)
+                if ($("#playChar").text() == "") { //if no player is selected
+                    $("#playChar").text(" ");
+                    $(this).appendTo("#playChar");
+                    $("#instr").text("Choose Your Opponent, Dude!");
+                    HP = charselect.hp;
+                    attack = charselect.attk;
+                    baseAttack = charselect.attk;
+                    $("#playerHP").text("HP: " + HP);
+                    playerChar = this
+                }
+                else if ($("#oppChar").text() == "") { //if no opponent is selected
+                    $("#oppChar").text(" ");
+                    $(this).appendTo("#oppChar");
+                    $("#instr").text("Fight!");
+                    oppHP = charselect.oppHp;
+                    countr = charselect.counter;
+                    $("#oppHP").text("HP: " + oppHP);
+                    opponent = this;
+
+                }
+            })
+
+            $("body").on("click", "#attack", function () { //attack button is the game
+                console.log("bloop")
+                if ((HP > 0) && (oppHP > 0)) { //base attack function
+                    $("#playerHP").text("HP: " + HP)
+                    $("#oppHP").text("HP: " + oppHP)
+                    $("#attDmg").text("Attack: " + attack)
+                    HP = HP - countr;
+                    oppHP = oppHP - attack;
+                    attack = attack + baseAttack;
+                }
+                else if ((oppHP == 'dead') &&(HP !== "win")) { //freeze attack for choosing
+                    $("#instr").text("Seriously, Dude, Choose Again!")
+                }
+                else if (HP == "win") { //freezes attack button on win so user doesn't miss the happy pics
+                        
+                    }
+                
+                else if ((HP > 0) && (oppHP <= 0)) { //defeated opponent conditions
+                    $("#oppChar").empty();
+                    $("#oppHP").empty();
+                    $("#instr").text("You Won! Radical! Choose Again!");
+                    oppHP = 'dead'
+                    wins++
+                    if (wins >= 7) { // all oponents defeated
+                        $("#playChar").empty();
+                        $("#playerHP").empty();
+                        $("#attDmg").empty();
+                        $("#turtHappy").appendTo("#playChar");
+                        $("#shredHappy").appendTo("#oppChar");
+                        $("#instr").text("Bodacious! You totally rocked it!")
+                        HP = "win";
+                        $("#charSelect").replaceWith(resetClone);
+                        resetClone = $("#charSelect").clone(); // if i don't immediately reset this it screws up on subsequent occurences
+                        wins = 0
+                    }
+                }
+                else if (HP <= 0) { //loss conditions
+                    wins = 0
+                    $("#attDmg").empty();
+                    $("#oppChar").empty();
+                    $("#oppHP").empty();
+                    $("#playChar").empty();
+                    $("#playerHP").empty();
+                    $("#instr").text("You Lost! Bummer! Try Again, Dude!")
+                    $("#charSelect").replaceWith(resetClone);
+                    resetClone = $("#charSelect").clone()
+                }
+            })
+
+        })
+
+    </script>
+</head>
+
+<body>
+
+    <div id="header">
+        <h1 id="TMNT">Teenage Mutant Pizza Battle</h1>
+    </div>
+
+
+    <div id="content">
+
+        <div class="container battleSpace">
+            <div class="row">
+                <div class="col-md-5" id="playChar"></div>
+                <div class="col-md-2" class="attack">
+                    <img id="attack" src="assets/pics/attack.png">
+                </div>
+                <div class="col-md-5" id="oppChar"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5" id="playerHP"></div>
+                <div class="col-md-2" id="attDmg"></div>
+                <div class="col-md-5" id="oppHP"></div>
+            </div>
+
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p id="instr">Choose Your Character, Dude!</p>
+                </div>
+            </div>
+            <div class="row" id="charSelect">
+                <div class="col-md-6">
+                    <div class="container">
+                        <div class="row" id="turtles">
+                            <div class="col-md-3" id="raphSpot">
+                                <img class="turtlePic charPic" id="raph" src="assets/pics/raph.png" alt="Raphael">
+                            </div>
+                            <div class="col-md-3" id="leoSpot">
+                                <img class="turtlePic charPic" id="leo" src="assets/pics/leo.png" alt="Leonardo">
+                            </div>
+                            <div class="col-md-3" id="donnySpot">
+                                <img class="turtlePic charPic" id="donny" src="assets/pics/donny.png" alt="Donatello">
+                            </div>
+                            <div class="col-md-3" id="mikeySpot">
+                                <img class="turtlePic charPic" id="mikey" src="assets/pics/mikey.png" alt="Michelangelo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="container">
+                        <div class="row" id="footClan">
+                            <div class="col-md-3" id="shredderSpot">
+                                <img class="footPic charPic" id="shredder" src="assets/pics/shredder.png" alt="Oroku Saki">
+                            </div>
+                            <div class="col-md-3" id="bebopSpot">
+                                <img class="footPic charPic" id="bebop" src="assets/pics/Bebop.png" alt="Bebop">
+                            </div>
+                            <div class="col-md-3" id="rocksteadySpot">
+                                <img class="footPic charPic" id="rocksteady" src="assets/pics/rocksteady.png" alt="Rocksteady">
+                            </div>
+                            <div class="col-md-3" id="footSpot">
+                                <img class="footPic charPic" id="foot" src="assets/pics/foot.png" alt="Foot Ninja">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div id="hiddenelements">
+        <img class="charPic" id="turtHappy" src="assets/pics/happy2.png">
+        <img class="charPic" id="shredHappy" src="assets/pics/shredHappy.png">
+    </div>
+
+</body>
+
+</html>

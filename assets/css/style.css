@@ -1,0 +1,48 @@
+*{
+ box-sizing: border-box
+}
+
+@font-face{
+    font-family: turtles;
+    src: url(../fonts/Turtles.ttf)
+}
+
+body{
+    font-family: turtles;
+    background-color: #353535;
+    text-align: center;
+    color: lawngreen;
+}
+
+.battleSpace{
+    height: 315px;
+    padding: 7px;
+    background-color: rgba(70,70,70, .7);
+    border-radius: 7px;
+}
+
+#attack{
+    height: 100px;
+    width:  auto;
+    margin-top: 70px;
+}
+
+#hiddenelements{
+    display: none;
+}
+#header{
+    text-align: center;
+    font-size: 8pt;
+    padding: 20px;
+    background-color: darkgreen;
+    width: 960px;
+    margin: auto;
+    border-radius: 0  0 30px 30px;
+    color: #353535
+}
+.charPic{
+    height:270px;
+    width: auto
+
+}
+ 
